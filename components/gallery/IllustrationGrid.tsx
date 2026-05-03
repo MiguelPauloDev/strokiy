@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import IllustrationCard from '@/components/gallery/IllustrationCard';
 import Toast from '@/components/ui/Toast';
+import { downloadIllustrations } from '@/lib/download';
 import type { Illustration } from '@/types';
 import type { Breakpoint } from '@/hooks/useBreakpoint';
 
@@ -44,18 +45,6 @@ async function copyToClipboard(text: string) {
     document.execCommand('copy');
     document.body.removeChild(el);
   }
-}
-
-function downloadSvg(svg: string, name: string) {
-  const blob = new Blob([svg], { type: 'image/svg+xml' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href     = url;
-  a.download = `${name}.svg`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
 }
 
 /* ── Close icon ── */
@@ -103,11 +92,9 @@ export default function IllustrationGrid({ illustrations, breakpoint = 'desktop'
     setToastVisible(true);
   }, [selectedIlls, selectedCount]);
 
-  /* Download all selected SVGs (staggered to avoid browser blocking) */
+  /* Download selected SVGs — 1 file: direct .svg, 2+: ZIP */
   const handleDownloadAll = useCallback(() => {
-    selectedIlls.forEach((ill, i) => {
-      setTimeout(() => downloadSvg(ill.svg, ill.name), i * 120);
-    });
+    downloadIllustrations(selectedIlls.map(ill => ({ svg: ill.svg, name: ill.name })));
   }, [selectedIlls]);
 
   /* Clear all */
@@ -216,7 +203,7 @@ export default function IllustrationGrid({ illustrations, breakpoint = 'desktop'
                 letterSpacing: '-0.1px',
               }}
             >
-              {selectedCount > 1 ? 'Download all' : 'Download'}
+              {selectedCount === 1 ? 'Download SVG' : `Download ZIP (${selectedCount})`}
             </button>
 
             {/* Clear selection */}
