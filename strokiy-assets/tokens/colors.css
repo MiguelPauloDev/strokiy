@@ -1,0 +1,85 @@
+/* ============================================================
+   STROKIY — Design Tokens
+   Source: Figma frame "Strokiy" (ID: 22:3638)
+   Auto-extracted via Figma Desktop Bridge
+   ============================================================ */
+
+:root {
+
+  /* ── Page ─────────────────────────────────────────── */
+  --color-bg:               #F5F5F9;   /* page background */
+  --color-white:            #FFFFFF;   /* cards, badges, sidebar */
+  --color-surface:          #F1F1F1;   /* inputs, toggles, buttons */
+
+  /* ── Text ─────────────────────────────────────────── */
+  --color-text-primary:     #212123;   /* all body text & labels */
+  --color-text-muted:       #888888;   /* secondary / placeholder */
+
+  /* ── Brand / Accent ───────────────────────────────── */
+  --color-purple-soft:      #CCCCFF;   /* logo icon bg */
+  --color-purple-lighter:   #EFEFFF;   /* gradient blob / lavender */
+  --color-purple-dim:       rgba(204, 204, 255, 0.05); /* logo icon overlay */
+
+  /* ── Gradient Blobs (sidebar background) ─────────── */
+  --color-blob-lavender:    #EFEFFF;
+  --color-blob-blue:        #00AAFF;
+  --color-blob-red:         #FF3155;
+  --color-blob-orange:      #FF7733;
+  --color-blob-yellow:      #FFD819;
+
+  /* ── Angola Flag ──────────────────────────────────── */
+  --color-flag-red:         #D80027;
+  --color-flag-black:       #212123;
+  --color-flag-yellow:      #FFDA44;
+
+  /* ── Border / Divider ─────────────────────────────── */
+  --color-border:           #E8E8EE;
+
+  /* ── Spacing ──────────────────────────────────────── */
+  --space-1:   4px;
+  --space-2:   8px;
+  --space-3:   12px;
+  --space-4:   16px;
+  --space-5:   20px;
+  --space-6:   24px;
+  --space-8:   32px;
+  --space-10:  40px;
+
+  /* ── Border Radius ────────────────────────────────── */
+  --radius-sm:    8px;    /* copy button */
+  --radius-md:    12px;   /* inputs, icon buttons, toggles */
+  --radius-lg:    16px;   /* cards */
+  --radius-full:  100px;  /* pills, avatar badges */
+
+  /* ── Typography ───────────────────────────────────── */
+  --font-mono:  'Geist Mono', 'Courier New', monospace;
+  --font-sans:  'Geist', system-ui, sans-serif;
+
+  --text-xs:    12px;   /* labels, card name/style, copy button */
+  --text-sm:    14px;
+  --text-base:  16px;   /* time badge */
+  --text-lg:    18px;
+  --text-xl:    20px;
+
+  --weight-medium:    500;
+  --weight-semibold:  600;
+  --weight-bold:      700;
+
+  --leading-tight:   120%;
+  --leading-normal:  150%;
+
+  /* ── Shadows ──────────────────────────────────────── */
+  --shadow-card:    0 1px 4px rgba(33, 33, 35, 0.06);
+  --shadow-badge:   0 1px 3px rgba(33, 33, 35, 0.08);
+
+  /* ── Layout ───────────────────────────────────────── */
+  --layout-width:         1440px;
+  --layout-height:        848px;
+  --sidebar-width:        320px;
+  --main-width:           1120px;
+  --navbar-height:        72px;
+  --card-width:           204px;
+  --card-height:          200px;
+  --card-grid-gap:        8px;
+  --sidebar-inner-padding: 16px;
+}

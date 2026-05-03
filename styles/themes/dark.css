@@ -1,0 +1,58 @@
+/* ── Dark theme overrides ─────────────────────────────────────────────────
+   Applied via [data-theme="dark"] on <html>.
+   All values override the light-mode defaults in styles/tokens.css.
+──────────────────────────────────────────────────────────────────────────── */
+
+[data-theme="dark"] {
+  /* Page & structure */
+  --color-bg:            #0E0E0F;
+  --color-white:         #111111;
+  --color-surface:       #1A1A1A;
+  --color-text-primary:  #EFEFFF;
+  --color-text-muted:    rgba(239,239,255,0.4);
+  --color-border:        rgba(239,239,255,0.08);
+
+  /* Input */
+  --input-bg:            #1A1A1A;
+  --input-bg-hover:      #222222;
+
+  /* Sidebar */
+  --sidebar-bg:          #0A0A0A;
+
+  /* Cards */
+  --card-bg:                    #111111;
+  --card-selected-bg:           #EFEFFF;
+  --card-selected-text:         #0E0E0F;
+  --card-selected-filter:       brightness(0);
+  --card-hover-overlay-start:   rgba(17,17,17,0.76);
+  --card-copy-btn-bg:           rgba(239,239,255,0.12);
+  --card-copy-btn-color:        #EFEFFF;
+
+  /* Card theme tokens (CARD_TOKENS map) */
+  --card-radius:         24px;
+  --card-border:          2px solid rgba(39,39,39,0.4);
+  --card-selected-border: none;
+  --card-text:           #EFEFFF;
+  --card-text-size:      13px;
+  --card-copy-bg:        #EFEFFF;
+  --card-copy-color:     #0A0A0A;
+  --card-hover-shadow:   0px 2px 20px rgba(239,239,255,0.06);
+  --card-gradient-color: 17,17,17;
+  --card-transition:     180ms ease-in-out;
+  --card-svg-default:    brightness(0) invert(0.92);
+  --card-svg-selected:   brightness(0);
+
+  /* Card gradient overlay (hover) */
+  --card-gradient-start: rgba(17,17,17,0.76);
+  --card-gradient-end:   rgba(17,17,17,1);
+
+  /* Page fade-out gradient at bottom */
+  --page-fade: linear-gradient(to bottom, rgba(14,14,15,0) 0%, rgba(14,14,15,1) 93%);
+
+  /* Gradient blobs — more saturated in dark */
+  --color-blob-blue:     #0066FF;
+  --color-blob-red:      #FF0033;
+  --color-blob-orange:   #FF5500;
+  --color-blob-yellow:   #FFB800;
+  --color-blob-lavender: #7B7BFF;
+}

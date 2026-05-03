@@ -1,0 +1,85 @@
+:root {
+  /* Colors */
+  --color-bg:            #F5F5F9;
+  --color-white:         #FFFFFF;
+  --color-surface:       #F1F1F1;
+  --color-text-primary:  #212123;
+  --color-text-muted:    #888888;
+  --color-border:        #E8E8EE;
+
+  /* Input / surface variant */
+  --input-bg:            #F2F2F2;
+  --input-bg-hover:      #EBEBEB;
+
+  /* Sidebar */
+  --sidebar-bg:          #FFFFFF;
+
+  /* Card tokens */
+  --card-bg:                    #FFFFFF;
+  --card-selected-bg:           #212123;
+  --card-selected-text:         #FFFFFF;
+  --card-selected-filter:       brightness(0) invert(1);
+  --card-hover-overlay-start:   rgba(255,255,255,0.76);
+  --card-copy-btn-bg:           #F2F2F2;
+  --card-copy-btn-color:        #212123;
+
+  /* Card theme tokens (CARD_TOKENS map) */
+  --card-radius:         16px;
+  --card-border:         none;
+  --card-text:           #212123;
+  --card-text-size:      12px;
+  --card-copy-bg:        #F2F2F2;
+  --card-copy-color:     #212123;
+  --card-hover-shadow:   0px 2px 20px rgba(0,0,0,0.05);
+  --card-gradient-color: 255,255,255;
+  --card-transition:     260ms ease-out;
+  --card-svg-default:    none;
+  --card-svg-selected:   brightness(0) invert(1);
+
+  /* Card gradient overlay (hover) */
+  --card-gradient-start: rgba(255,255,255,0.76);
+  --card-gradient-end:   rgba(255,255,255,1);
+
+  /* Page fade-out gradient at bottom */
+  --page-fade: linear-gradient(to bottom, rgba(245,245,249,0) 0%, rgba(245,245,249,1) 93%);
+
+  /* Gradient blobs */
+  --color-blob-blue:     #00AAFF;
+  --color-blob-red:      #FF3155;
+  --color-blob-orange:   #FF7733;
+  --color-blob-yellow:   #FFD819;
+  --color-blob-lavender: #EFEFFF;
+
+  /* Spacing scale (4px base) */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-7:  28px;
+  --space-8:  32px;
+  --space-9:  36px;
+  --space-10: 40px;
+
+  /* Border radius */
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-full: 100px;
+
+  /* Layout */
+  --sidebar-width:   320px;
+  --navbar-height:   72px;
+  --card-width:      204px;
+  --card-height:     200px;
+  --card-grid-gap:   8px;
+}
+
+/* ── Suppress all transitions while swapping theme ──────────────────────── */
+.no-transition *,
+.no-transition *::before,
+.no-transition *::after {
+  transition: none !important;
+  animation:  none !important;
+}
