@@ -303,28 +303,81 @@ npm run type-check   # tsc --noEmit
 
 ---
 
-## Roadmap (para contexto — não implementar tudo de uma vez)
+## Estado Actual do Projecto (Maio 2026)
 
-### Fase 1 — MVP (implementar primeiro)
-- [ ] Setup Next.js + Tailwind + Supabase
-- [ ] Design system / CSS tokens
-- [ ] Componente IllustrationCard
-- [ ] Galeria com grid e filtros
-- [ ] Copy SVG para clipboard
-- [ ] Página de detalhe
+### Funcionalidades implementadas e funcionais
 
-### Fase 2 — Editor
-- [ ] Motor de geração SVG (`svg-generator.ts`)
-- [ ] Canvas em tempo real
-- [ ] Painel de controlos
-- [ ] Export do resultado
+**Galeria pública**
+- ✅ Grid responsivo de ilustrações SVG (mobile 2 cols, tablet 3 cols, desktop auto-fill)
+- ✅ Filtros: categoria, estilo, cor, pesquisa por texto — todos client-side
+- ✅ Copy SVG para clipboard com toast de sucesso/erro
+- ✅ Selecção múltipla de cards (click no card)
+- ✅ Action bar flutuante: "Copy all" / "Download SVG" / "Download ZIP (N)"
+- ✅ Download inteligente: 1 ficheiro → `.svg` directo; 2+ → `.zip` via JSZip
+- ✅ Toast de feedback em todas as acções (copy, download, erro)
 
-### Fase 3 — Crescimento
-- [ ] Auth (Supabase Auth)
-- [ ] Utilizadores podem submeter ilustrações
-- [ ] Favoritos
-- [ ] API pública
+**Dark mode / Som**
+- ✅ Dark sidebar com design próprio (gradientes, PP Mondwest)
+- ✅ Dark mode em mobile como drawer (DarkSidebar com `isDrawer`)
+- ✅ FAB de filtros em mobile dark mode
+- ✅ Sistema de som lofi com play/pause, volume slider, faixa seguinte
+- ✅ Volume slider acessível (teclado: ArrowLeft/Right/Up/Down/Home/End)
+- ✅ Memory leak do lofi corrigido (cleanup do `useEffect` + `removeEventListener`)
+
+**UX / Qualidade**
+- ✅ Easter egg (Konami code)
+- ✅ Pixel transition na entrada
+- ✅ Click spark (partículas no click)
+- ✅ Time badge com timezone detection e bandeira do país
+- ✅ Hint "double click to explore" com cleanup correcto
+- ✅ Botão "Get resources" → mailto com subject
+
+**Código / Infra**
+- ✅ `lib/clipboard.ts` — unified clipboard com boolean return
+- ✅ `lib/download.ts` — download inteligente SVG/ZIP
+- ✅ `lib/timezone.ts` — `TZ_TO_COUNTRY` extraído de `page.tsx`
+- ✅ `@keyframes barIn` movido para `globals.css`
+- ✅ `useCallback` no `set` do FilterBar
 
 ---
 
-*Documento gerado em Abril 2026. Actualizar este ficheiro quando houver mudanças arquitecturais.*
+### Bugs pendentes (do AUDIT.md)
+
+| # | Bug | Ficheiro | Severidade |
+|---|-----|----------|------------|
+| 13 | CLS do `useBreakpoint` — estado inicial `'desktop'` causa layout shift em mobile | `hooks/useBreakpoint.ts:18` | 🟠 |
+| 14 | `prepareSvg` corrompe SVGs com `width` em atributos de filhos | `components/gallery/IllustrationCard.tsx:14-19` | 🔴 |
+| 15 | Filtro de cor usa hex hardcoded que não bate com os SVGs reais | `components/gallery/FilterBar.tsx` | 🟠 |
+| 12 | `app/page.tsx` ainda com ~700 linhas — dividir em componentes | `app/page.tsx` | 🟡 |
+
+---
+
+### Ficheiros chave
+
+| Ficheiro | Responsabilidade |
+|----------|-----------------|
+| `app/page.tsx` | Homepage — layout, dark mode, som, easter egg |
+| `components/gallery/IllustrationGrid.tsx` | Grid + selecção múltipla + action bar |
+| `components/gallery/IllustrationCard.tsx` | Card individual + copy + select |
+| `components/gallery/FilterBar.tsx` | Sidebar de filtros (light mode) |
+| `components/gallery/DarkSidebar.tsx` | Sidebar dark mode |
+| `hooks/useSoundSystem.ts` | Lofi player com cleanup |
+| `hooks/useBreakpoint.ts` | Breakpoint detector (tem CLS pendente) |
+| `lib/clipboard.ts` | Copy SVG unificado |
+| `lib/download.ts` | Download SVG / ZIP |
+| `lib/timezone.ts` | Timezone → país |
+| `app/globals.css` | Tokens, keyframes globais |
+| `AUDIT.md` | Auditoria completa — estado dos bugs |
+
+---
+
+### Próximas sessões — o que fazer
+
+1. **Resolver CLS do `useBreakpoint`** — mudar estado inicial para `null` e não renderizar o grid até ao breakpoint estar determinado (ou usar CSS media queries)
+2. **Substituir `prepareSvg`** por parser SVG robusto — usar `DOMParser` para ler e reescrever apenas os atributos necessários
+3. **Corrigir filtro de cor** — mapear as cores reais dos SVGs para os swatches do FilterBar
+4. **Dividir `app/page.tsx`** — extrair `TimeBadge`, `DarkTimeBadge`, `DarkSoundButtons`, `WaveButton` para componentes próprios em `components/layout/`
+
+---
+
+*Documento actualizado em Maio 2026. Actualizar este ficheiro quando houver mudanças arquitecturais.*
