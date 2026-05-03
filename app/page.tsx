@@ -189,6 +189,20 @@ function IconWaveformSlash({ size = 20 }: { size?: number }) {
   );
 }
 
+/* ── Icon/Wave — State=Waveform (Figma node I59:1213;2334:7631)
+   5 linhas verticais, coordenadas exactas do vectorPaths + relativeTransform ── */
+function IconDarkWave() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
+      <line x1="3"    y1="6"  x2="3"    y2="10" stroke="#EFEFFF" strokeWidth="1.5" strokeLinecap="round"/>
+      <line x1="5.5"  y1="2"  x2="5.5"  y2="14" stroke="#EFEFFF" strokeWidth="1.5" strokeLinecap="round"/>
+      <line x1="8"    y1="4"  x2="8"    y2="12" stroke="#EFEFFF" strokeWidth="1.5" strokeLinecap="round"/>
+      <line x1="10.5" y1="6"  x2="10.5" y2="10" stroke="#EFEFFF" strokeWidth="1.5" strokeLinecap="round"/>
+      <line x1="13"   y1="5"  x2="13"   y2="11" stroke="#EFEFFF" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
 /* ── Botão Wave ── */
 function WaveButton() {
   const { soundEnabled, toggle } = useSoundContext();
@@ -278,68 +292,72 @@ function DarkTimeBadge() {
   );
 }
 
-/* ──────────────────────────────────────────────────────────────────
-   Icon/Speakers — paths reconstruídos a partir dos SVG assets
-   exportados pelo Figma (node 59:1214, file s2H6SoZwtpTC0zkEatgn0b).
-   Todos os paths cabem dentro do viewBox 16×16 (sem overflow).
-   stroke="currentColor" → herdado do botão pai (dark: #EFEFFF)
-   ────────────────────────────────────────────────────────────────── */
+/* ── Icon/Speakers — paths exactos do Figma (node 59:1214, file s2H6SoZwtpTC0zkEatgn0b)
+   Coordenadas absolutas calculadas a partir de vectorPaths + relativeTransform de cada vector. ── */
 
-/*  Corpo do speaker — 3 paths:
-    1. Corpo principal (open path, cantos arredondados, cone até x≈12.2)
-    2. Detalhe superior do cone (triângulo angular x:7.4→9.5)
-    3. Linha divisória vertical (x=5, y: 5.5→10.5)                    */
-const SPEAKER_BODY = (
-  <>
-    <path
-      d="M12.2 8.1V12.7L7.5 9H4.3C4.0 9 3.8 8.7 3.8 8.4V4.2C3.8 3.9 4.0 3.7 4.3 3.7H7.5L7.9 3.3"
-      stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" fill="none"
-    />
-    <path
-      d="M7.4 3.6L9.5 2V5.9"
-      stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" fill="none"
-    />
-    <path
-      d="M5 5.5V10.5"
-      stroke="currentColor" strokeWidth={1.5} strokeLinecap="round"
-    />
-  </>
-);
+/* Paths partilhados pelos dois estados (High e Slash) */
+function SpeakerPaths() {
+  return (
+    <>
+      {/* Corpo inferior + cone — node 2382:6251 @ (1.5, 5.168) */}
+      <path
+        d="M9.5 9.65V14L5 10.5H2C1.87 10.5 1.74 10.45 1.65 10.35C1.55 10.26 1.5 10.13 1.5 10V6C1.5 5.87 1.55 5.74 1.65 5.65C1.74 5.55 1.87 5.5 2 5.5H5L5.43 5.17"
+        stroke="#EFEFFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"
+      />
+      {/* Cone superior — node 2382:6252 @ (7.406, 2) */}
+      <path
+        d="M7.41 3.63L9.5 2V5.93"
+        stroke="#EFEFFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"
+      />
+      {/* Divisor vertical — node 2382:6250 @ (5, 5.5) */}
+      <line x1="5" y1="5.5" x2="5" y2="10.5" stroke="#EFEFFF" strokeWidth="1.5" strokeLinecap="round"/>
+      {/* Arco próximo — node 2382:6253 @ (12, 6.68) */}
+      <path
+        d="M12 6.68C12.27 6.99 12.44 7.37 12.49 7.78C12.53 8.19 12.45 8.6 12.25 8.96"
+        stroke="#EFEFFF" strokeWidth="1.5" strokeLinecap="round" fill="none"
+      />
+      {/* Arco afastado — node 2382:6254 @ (13.855, 5) */}
+      <path
+        d="M13.86 5C14.57 5.8 14.98 6.83 15 7.91C15.02 8.98 14.66 10.03 13.98 10.86"
+        stroke="#EFEFFF" strokeWidth="1.5" strokeLinecap="round" fill="none"
+      />
+    </>
+  );
+}
 
-/*  Arcos de som — 2 beziers duplos exactos do Figma:
-    close arc: x≈12–12.5  (max stroke reach ≈13.25, dentro de 16)
-    far   arc: x≈13.9–15  (max stroke reach ≈15.75, dentro de 16)   */
-const SPEAKER_ARCS = (
-  <>
-    <path
-      d="M12 6.7C12.3 7.0 12.5 7.4 12.5 7.8C12.5 8.2 12.4 8.6 12.2 9.0"
-      stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" fill="none"
-    />
-    <path
-      d="M13.9 5C14.6 5.8 15.0 6.8 15.0 7.9C15.0 9.0 14.7 10.0 14.0 11.1"
-      stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" fill="none"
-    />
-  </>
-);
-
-/* State=SpeakerHigh — lofi ON */
+/* State=SpeakerHigh — lofi ON (Figma node 24:4904, vectorPaths exactos) */
 function IconSpeakerHigh() {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
-      {SPEAKER_BODY}
-      {SPEAKER_ARCS}
+      {/* Corpo + cone — node 24:4906 @ (1.5, 2), path fechado */}
+      <path
+        d="M5 10.5L2 10.5C1.867 10.5 1.74 10.447 1.646 10.354C1.553 10.26 1.5 10.133 1.5 10L1.5 6C1.5 5.867 1.553 5.74 1.646 5.646C1.74 5.553 1.867 5.5 2 5.5L5 5.5L9.5 2L9.5 14L5 10.5Z"
+        stroke="#EFEFFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"
+      />
+      {/* Divisor vertical — node 24:4907 @ (5, 5.5) */}
+      <line x1="5" y1="5.5" x2="5" y2="10.5" stroke="#EFEFFF" strokeWidth="1.5" strokeLinecap="round"/>
+      {/* Arco próximo — node 24:4908 @ (12, 6.68) */}
+      <path
+        d="M12 6.68C12.32 7.05 12.5 7.52 12.5 8C12.5 8.49 12.32 8.96 12 9.32"
+        stroke="#EFEFFF" strokeWidth="1.5" strokeLinecap="round" fill="none"
+      />
+      {/* Arco afastado — node 24:4909 @ (13.856, 5) */}
+      <path
+        d="M13.856 5C14.594 5.825 15.001 6.893 15.001 8C15.001 9.107 14.594 10.175 13.856 11"
+        stroke="#EFEFFF" strokeWidth="1.5" strokeLinecap="round" fill="none"
+      />
     </svg>
   );
 }
 
-/* State=SpeakerSlash — lofi OFF */
+/* State=SpeakerSlash — lofi OFF (node 59:1214) — slash diagonal de (3,2.5)→(13,13.5) */
 function IconSpeakerSlash() {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
-      {SPEAKER_BODY}
-      {SPEAKER_ARCS}
-      <path d="M1.5 5.2L9.5 14"
-        stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" />
+      <SpeakerPaths />
+      {/* Slash — backing escuro separa do icon, linha branca por cima */}
+      <line x1="3" y1="2.5" x2="13" y2="13.5" stroke="#111111" strokeWidth="4"   strokeLinecap="round"/>
+      <line x1="3" y1="2.5" x2="13" y2="13.5" stroke="#EFEFFF" strokeWidth="1.5" strokeLinecap="round"/>
     </svg>
   );
 }
@@ -372,12 +390,10 @@ function DarkSoundButtons() {
   const handleWrapperEnter = useCallback(() => {
     if (hideTimer.current) clearTimeout(hideTimer.current);
     if (wrapperRef.current) {
-      const r           = wrapperRef.current.getBoundingClientRect();
+      const r            = wrapperRef.current.getBoundingClientRect();
       const popoverWidth = 208;
-      const centeredLeft = r.left + r.width / 2 - popoverWidth / 2;
-      const left = centeredLeft + popoverWidth > window.innerWidth - 8
-        ? window.innerWidth - popoverWidth - 8
-        : Math.max(8, centeredLeft);
+      /* Alinha pela direita do botão, garante que não sai do viewport */
+      const left = Math.max(8, r.right - popoverWidth);
       setPopoverPos({ x: left, y: r.bottom + 8 });
     }
     setShowPopover(true);
@@ -428,11 +444,11 @@ function DarkSoundButtons() {
   /* ── Shared button style ── */
   const BTN: React.CSSProperties = {
     width: 40, height: 40, borderRadius: 100,
-    background: '#111111',
-    border: '1.333px solid rgba(39,39,39,0.4)',
+    background: '#1C1C1C',
+    border: 'none',
     cursor: 'pointer',
     display: 'flex', alignItems: 'center', justifyContent: 'center',
-    padding: 0,
+    padding: 12,
     transition: 'opacity 200ms ease',
     boxSizing: 'border-box',
     color: '#EFEFFF',
@@ -449,9 +465,9 @@ function DarkSoundButtons() {
         onClick={handleEffectsClick}
         title={soundEnabled ? 'Disable sound effects' : 'Enable sound effects'}
         aria-label={soundEnabled ? 'Disable sound effects' : 'Enable sound effects'}
-        style={{ ...BTN, opacity: soundEnabled ? 1 : 0.35 }}
+        style={{ ...BTN, opacity: soundEnabled ? 1 : 0.45 }}
       >
-        {soundEnabled ? <IconWaveform animate size={16} /> : <IconWaveformSlash size={16} />}
+        <IconDarkWave />
       </button>
 
       {/* ── Botão 2 — Lofi + popover hover wrapper ── */}
@@ -582,7 +598,7 @@ function DarkSoundButtons() {
           onClick={toggleLofi}
           title={lofiEnabled ? 'Stop lofi · Hover to adjust volume' : 'Play lofi music'}
           aria-label={lofiEnabled ? 'Stop lofi music' : 'Play lofi music'}
-          style={{ ...BTN, opacity: lofiEnabled ? 1 : 0.35 }}
+          style={{ ...BTN, opacity: lofiEnabled ? 1 : 0.45 }}
         >
           {lofiEnabled ? <IconSpeakerHigh /> : <IconSpeakerSlash />}
         </button>

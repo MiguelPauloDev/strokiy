@@ -228,8 +228,8 @@ export default function DarkSidebar({
     <aside
       style={{
         position:      isDrawer ? 'fixed' : 'relative',
-        left:          0,
-        top:           0,
+        left:          "0",
+        top:           "0",
         width:         320,
         minWidth:      320,
         height:        isDrawer ? '100dvh' : '100%',
