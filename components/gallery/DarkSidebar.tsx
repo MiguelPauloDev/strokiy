@@ -695,6 +695,7 @@ export default function DarkSidebar({
 
           {/* Get resources button */}
           <button
+            onClick={() => window.open('mailto:hello@strokiy.com?subject=Strokiy Production Core', '_blank')}
             style={{
               width:          '100%',
               height:         40,

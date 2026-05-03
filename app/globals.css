@@ -40,3 +40,9 @@ body {
   50%       { transform: scaleY(1.0);  }
 }
 
+/* Action bar — entrada da barra de selecção de cards */
+@keyframes barIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+

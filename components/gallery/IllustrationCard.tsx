@@ -3,12 +3,14 @@
 import { useState, useCallback } from 'react';
 import type { Illustration } from '@/types';
 import { useSoundContext } from '@/providers/SoundContext';
+import { copyToClipboard } from '@/lib/clipboard';
 
 interface Props {
   illustration: Illustration;
-  isSelected: boolean;
-  onSelect: (id: string) => void;
-  onCopy: () => void;
+  isSelected:   boolean;
+  onSelect:     (id: string) => void;
+  onCopy:       () => void;
+  onCopyError?: () => void;
 }
 
 function prepareSvg(svg: string): string {
@@ -18,26 +20,13 @@ function prepareSvg(svg: string): string {
     .replace('<svg ', '<svg width="124" height="124" ');
 }
 
-async function copyToClipboard(text: string) {
-  try {
-    await navigator.clipboard.writeText(text);
-  } catch {
-    const el = document.createElement('textarea');
-    el.value = text;
-    document.body.appendChild(el);
-    el.select();
-    document.execCommand('copy');
-    document.body.removeChild(el);
-  }
-}
-
 /* Easing lento (Default → Hover) */
 const SLOW_EASING = 'cubic-bezier(0.45, 0, 0.55, 1)';
 const SLOW_TRANSITION = `333ms ${SLOW_EASING}`;
 
 /* ── Component ───────────────────────────────────────────────────────────── */
 
-export default function IllustrationCard({ illustration, isSelected, onSelect, onCopy }: Props) {
+export default function IllustrationCard({ illustration, isSelected, onSelect, onCopy, onCopyError }: Props) {
   const [isHovered, setIsHovered] = useState(false);
   const { play } = useSoundContext();
 
@@ -45,10 +34,14 @@ export default function IllustrationCard({ illustration, isSelected, onSelect, o
 
   const handleCopy = useCallback(async (e: React.MouseEvent) => {
     e.stopPropagation();
-    await copyToClipboard(illustration.svg);
-    play('copy');
-    onCopy();
-  }, [illustration.svg, onCopy, play]);
+    const success = await copyToClipboard(illustration.svg);
+    if (success) {
+      play('copy');
+      onCopy();
+    } else {
+      onCopyError?.();
+    }
+  }, [illustration.svg, onCopy, onCopyError, play]);
 
   const handleSelect = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -66,6 +59,7 @@ export default function IllustrationCard({ illustration, isSelected, onSelect, o
   return (
     <article
       data-card=""
+      onClick={isSelected ? handleDeselect : handleSelect}
       onMouseEnter={() => { setIsHovered(true); if (!isSelected) play('hover'); }}
       onMouseLeave={() => setIsHovered(false)}
       style={{
@@ -76,7 +70,7 @@ export default function IllustrationCard({ illustration, isSelected, onSelect, o
         overflow:     'hidden',
         background:   isSelected ? 'var(--card-selected-bg)' : 'var(--card-bg)',
         border:       isSelected ? 'var(--card-selected-border, var(--card-border))' : 'var(--card-border)',
-        cursor:       isSelected ? 'pointer' : 'default',
+        cursor:       'pointer',
         transition:   'background var(--card-transition)',
         boxSizing:    'border-box',
       }}

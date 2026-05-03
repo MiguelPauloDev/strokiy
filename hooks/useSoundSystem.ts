@@ -86,6 +86,12 @@ export function useSoundSystem() {
   /* Avança para a próxima faixa quando a actual termina */
   const playNext = useCallback(() => {
     if (!lofiEnabled$.current) return;
+
+    /* Remove listener da faixa anterior antes de criar a nova */
+    if (lofiRef.current) {
+      lofiRef.current.removeEventListener('ended', playNext);
+    }
+
     lofiTrackIndex.current = (lofiTrackIndex.current + 1) % LOFI_TRACKS.length;
     const audio = new Audio(LOFI_TRACKS[lofiTrackIndex.current]);
     audio.addEventListener('ended', playNext);
@@ -109,7 +115,9 @@ export function useSoundSystem() {
       const a = lofiRef.current;
       if (!a) return;
       a.removeEventListener('ended', playNext);
-      fadeOut(a);
+      a.pause();
+      a.volume = 0;
+      lofiRef.current = null;
     };
   }, [lofiEnabled, playNext]);
 

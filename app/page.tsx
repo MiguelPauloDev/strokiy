@@ -12,46 +12,7 @@ import { useFilters } from '@/providers/FilterContext';
 import { useSoundContext } from '@/providers/SoundContext';
 import { useThemeContext } from '@/providers/ThemeContext';
 import { getIllustrations } from '@/lib/illustrations';
-
-/* ── Timezone → country code map ── */
-const TZ_TO_COUNTRY: Record<string, string> = {
-  'Africa/Luanda': 'AO', 'Africa/Lagos': 'NG', 'Africa/Nairobi': 'KE',
-  'Africa/Cairo': 'EG', 'Africa/Johannesburg': 'ZA', 'Africa/Accra': 'GH',
-  'Africa/Casablanca': 'MA', 'Africa/Abidjan': 'CI', 'Africa/Addis_Ababa': 'ET',
-  'Africa/Kampala': 'UG', 'Africa/Dar_es_Salaam': 'TZ', 'Africa/Khartoum': 'SD',
-  'Africa/Maputo': 'MZ', 'Africa/Douala': 'CM', 'Africa/Kinshasa': 'CD',
-  'Africa/Dakar': 'SN', 'Africa/Algiers': 'DZ', 'Africa/Tunis': 'TN',
-  'Africa/Tripoli': 'LY', 'Africa/Harare': 'ZW', 'Africa/Lusaka': 'ZM',
-  'Africa/Windhoek': 'NA',
-  'Europe/Lisbon': 'PT', 'Europe/London': 'GB', 'Europe/Paris': 'FR',
-  'Europe/Berlin': 'DE', 'Europe/Madrid': 'ES', 'Europe/Rome': 'IT',
-  'Europe/Amsterdam': 'NL', 'Europe/Brussels': 'BE', 'Europe/Vienna': 'AT',
-  'Europe/Zurich': 'CH', 'Europe/Stockholm': 'SE', 'Europe/Oslo': 'NO',
-  'Europe/Copenhagen': 'DK', 'Europe/Helsinki': 'FI', 'Europe/Warsaw': 'PL',
-  'Europe/Prague': 'CZ', 'Europe/Budapest': 'HU', 'Europe/Bucharest': 'RO',
-  'Europe/Athens': 'GR', 'Europe/Istanbul': 'TR', 'Europe/Moscow': 'RU',
-  'Europe/Kiev': 'UA', 'Europe/Kyiv': 'UA', 'Europe/Dublin': 'IE',
-  'Europe/Riga': 'LV', 'Europe/Tallinn': 'EE', 'Europe/Vilnius': 'LT',
-  'Europe/Sofia': 'BG',
-  'America/New_York': 'US', 'America/Chicago': 'US', 'America/Denver': 'US',
-  'America/Los_Angeles': 'US', 'America/Anchorage': 'US', 'America/Honolulu': 'US',
-  'America/Sao_Paulo': 'BR', 'America/Manaus': 'BR', 'America/Toronto': 'CA',
-  'America/Vancouver': 'CA', 'America/Mexico_City': 'MX', 'America/Bogota': 'CO',
-  'America/Lima': 'PE', 'America/Santiago': 'CL',
-  'America/Argentina/Buenos_Aires': 'AR', 'America/Caracas': 'VE',
-  'America/Havana': 'CU', 'America/Santo_Domingo': 'DO', 'America/Guatemala': 'GT',
-  'America/Montevideo': 'UY', 'America/La_Paz': 'BO', 'America/Asuncion': 'PY',
-  'America/Guayaquil': 'EC', 'America/Panama': 'PA',
-  'Asia/Tokyo': 'JP', 'Asia/Shanghai': 'CN', 'Asia/Seoul': 'KR',
-  'Asia/Singapore': 'SG', 'Asia/Dubai': 'AE', 'Asia/Kolkata': 'IN',
-  'Asia/Bangkok': 'TH', 'Asia/Jakarta': 'ID', 'Asia/Taipei': 'TW',
-  'Asia/Hong_Kong': 'HK', 'Asia/Kuala_Lumpur': 'MY', 'Asia/Manila': 'PH',
-  'Asia/Karachi': 'PK', 'Asia/Dhaka': 'BD', 'Asia/Riyadh': 'SA',
-  'Asia/Tehran': 'IR', 'Asia/Baghdad': 'IQ', 'Asia/Beirut': 'LB',
-  'Asia/Jerusalem': 'IL', 'Asia/Almaty': 'KZ',
-  'Australia/Sydney': 'AU', 'Australia/Melbourne': 'AU', 'Australia/Perth': 'AU',
-  'Pacific/Auckland': 'NZ', 'Pacific/Honolulu': 'US',
-};
+import { getCountryFromTimezone } from '@/lib/timezone';
 
 /* ── Time badge — client only ── */
 function TimeBadge() {
@@ -59,7 +20,7 @@ function TimeBadge() {
 
   useEffect(() => {
     const userTz  = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const country = TZ_TO_COUNTRY[userTz] ?? 'AO';
+    const country = getCountryFromTimezone(userTz);
 
     const fmt = () => {
       const parts = new Intl.DateTimeFormat('en-GB', {
@@ -245,7 +206,7 @@ function DarkTimeBadge() {
 
   useEffect(() => {
     const userTz  = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const code    = TZ_TO_COUNTRY[userTz] ?? 'AO';
+    const code    = getCountryFromTimezone(userTz);
 
     let countryName = code;
     try {
@@ -441,6 +402,23 @@ function DarkSoundButtons() {
     };
   }, [setLofiVolume]);
 
+  /* ── Arrow keys / Home / End no slider ── */
+  const handleSliderKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      setLofiVolume(Math.min(1, lofiVolume + 0.05));
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      setLofiVolume(Math.max(0, lofiVolume - 0.05));
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      setLofiVolume(0);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      setLofiVolume(1);
+    }
+  }, [lofiVolume, setLofiVolume]);
+
   /* ── Shared button style ── */
   const BTN: React.CSSProperties = {
     width: 40, height: 40, borderRadius: 100,
@@ -531,11 +509,18 @@ function DarkSoundButtons() {
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
             </svg>
 
-            {/* Track container — click to seek */}
+            {/* Track container — click to seek, role=slider para teclado e screen readers */}
             <div
               ref={trackRef}
+              role="slider"
+              aria-label="Volume do lofi"
+              aria-valuenow={Math.round(lofiVolume * 100)}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              tabIndex={0}
               onClick={handleTrackClick}
-              style={{ flex: 1, height: 24, position: 'relative', cursor: 'pointer' }}
+              onKeyDown={handleSliderKeyDown}
+              style={{ flex: 1, height: 24, position: 'relative', cursor: 'pointer', outline: 'none' }}
             >
               {/* Track background */}
               <div style={{
@@ -645,15 +630,16 @@ export default function HomePage() {
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: 'var(--color-bg)' }}>
 
       {/* ── Sidebar / Drawer ── */}
-      {!isMobile && (
+      {/* Desktop: sidebar fixa | Tablet: drawer com overlay | Mobile light: /filters | Mobile dark: drawer com overlay + FAB */}
+      {(!isMobile || isDark) && (
         <>
-          {isTablet && <Overlay isOpen={drawerOpen} onClick={closeDrawer} />}
+          {(isTablet || (isMobile && isDark)) && <Overlay isOpen={drawerOpen} onClick={closeDrawer} />}
           {isDark ? (
             <DarkSidebar
               filters={filters}
               onChange={setFilters}
               total={totalCount}
-              isDrawer={isTablet}
+              isDrawer={isTablet || isMobile}
               isOpen={drawerOpen}
               onClose={closeDrawer}
             />
@@ -760,6 +746,37 @@ export default function HomePage() {
           pointerEvents: 'none',
           zIndex:        10,
         }} />
+
+        {/* ── FAB filtros — só em mobile dark mode ── */}
+        {isMobile && isDark && (
+          <button
+            onClick={openDrawer}
+            title="Filtros"
+            aria-label="Abrir filtros"
+            style={{
+              position:       'fixed',
+              bottom:         24,
+              right:          24,
+              width:          48,
+              height:         48,
+              borderRadius:   100,
+              background:     '#111111',
+              border:         '1px solid rgba(39,39,39,0.4)',
+              display:        'flex',
+              alignItems:     'center',
+              justifyContent: 'center',
+              zIndex:         100,
+              cursor:         'pointer',
+              boxShadow:      '0 4px 16px rgba(0,0,0,0.5)',
+            }}
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden>
+              <line x1="3" y1="6"  x2="17" y2="6"  stroke="#EFEFFF" strokeWidth="1.5" strokeLinecap="round"/>
+              <line x1="6" y1="10" x2="14" y2="10" stroke="#EFEFFF" strokeWidth="1.5" strokeLinecap="round"/>
+              <line x1="9" y1="14" x2="11" y2="14" stroke="#EFEFFF" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+          </button>
+        )}
       </div>
     </div>
   );

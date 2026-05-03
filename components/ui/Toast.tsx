@@ -2,15 +2,23 @@
 
 import { useEffect, useState } from 'react';
 
+export type ToastVariant = 'success' | 'error';
+
 interface ToastProps {
   message:     string;
   visible:     boolean;
   onHide:      () => void;
+  variant?:    ToastVariant;
   /** px a partir da esquerda — usar 320 quando sidebar está visível (desktop) */
   offsetLeft?: number;
 }
 
-export default function Toast({ message, visible, onHide, offsetLeft = 0 }: ToastProps) {
+const BG: Record<ToastVariant, string> = {
+  success: '#212123',
+  error:   '#FF3155',
+};
+
+export default function Toast({ message, visible, onHide, variant = 'success', offsetLeft = 0 }: ToastProps) {
   const [rendered, setRendered] = useState(false);
 
   useEffect(() => {
@@ -39,25 +47,24 @@ export default function Toast({ message, visible, onHide, offsetLeft = 0 }: Toas
         display:        'flex',
         justifyContent: 'center',
         pointerEvents:  'none',
-        /* fade + slide */
         opacity:    visible ? 1 : 0,
         transform:  visible ? 'translateY(0)' : 'translateY(8px)',
         transition: 'opacity 300ms ease, transform 300ms ease',
       }}
     >
       <div style={{
-        height:      40,
-        padding:     '0 16px',
-        borderRadius: 100,
-        background:   '#212123',
-        color:        '#FFFFFF',
-        fontFamily:   '"Geist Mono", monospace',
-        fontSize:     12,
-        fontWeight:   600,
-        display:      'flex',
-        alignItems:   'center',
-        boxShadow:    '0px 4px 24px rgba(0,0,0,0.18)',
-        whiteSpace:   'nowrap',
+        height:        40,
+        padding:       '0 16px',
+        borderRadius:  100,
+        background:    BG[variant],
+        color:         '#FFFFFF',
+        fontFamily:    '"Geist Mono", monospace',
+        fontSize:      12,
+        fontWeight:    600,
+        display:       'flex',
+        alignItems:    'center',
+        boxShadow:     '0px 4px 24px rgba(0,0,0,0.18)',
+        whiteSpace:    'nowrap',
         pointerEvents: 'auto',
       }}>
         {message}

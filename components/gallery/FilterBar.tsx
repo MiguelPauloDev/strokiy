@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import BackgroundGradient, { type BlobSpec } from '@/components/ui/BackgroundGradient';
 import type { FilterState, IllustrationCategory, IllustrationStyle } from '@/types';
 import { useThemeContext } from '@/providers/ThemeContext';
@@ -257,29 +257,38 @@ export default function FilterBar({ filters, onChange, total, isDrawer = false, 
   useEffect(() => {
     try { if (localStorage.getItem('strokiy-hint-shown')) return; } catch {}
 
+    let t2: ReturnType<typeof setTimeout>;
+    let t3: ReturnType<typeof setTimeout>;
+    let t4: ReturnType<typeof setTimeout>;
+
     const t1 = setTimeout(() => {
       setHintShown(true);
-      /* Next frame → fade in */
-      const t2 = setTimeout(() => setHintVisible(true), 50);
-      /* Show for 1.5 s → fade out */
-      const t3 = setTimeout(() => {
+      t2 = setTimeout(() => setHintVisible(true), 50);
+      t3 = setTimeout(() => {
         setHintVisible(false);
-        setTimeout(() => {
+        t4 = setTimeout(() => {
           setHintShown(false);
           try { localStorage.setItem('strokiy-hint-shown', 'true'); } catch {}
         }, 300);
       }, 1550);
-
-      return () => { clearTimeout(t2); clearTimeout(t3); };
     }, 2000);
 
-    return () => clearTimeout(t1);
+    /* Cleanup correcto — todos os timeouts cancelados se o componente desmonta */
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+      clearTimeout(t4);
+    };
   }, []);
 
   const inputRef  = useRef<HTMLInputElement>(null);
   const selectRef = useRef<HTMLSelectElement>(null);
 
-  const set = (patch: Partial<FilterState>) => onChange({ ...filters, ...patch });
+  const set = useCallback(
+    (patch: Partial<FilterState>) => onChange({ ...filters, ...patch }),
+    [filters, onChange],
+  );
 
   const activeStyleLabel =
     STYLE_OPTIONS.find((o) => o.value === filters.style)?.label ?? '';
@@ -773,6 +782,7 @@ export default function FilterBar({ filters, onChange, total, isDrawer = false, 
               </div>
 
               <button
+                onClick={() => window.open('mailto:hello@strokiy.com?subject=Strokiy Production Core', '_blank')}
                 style={{
                   width:         '100%',
                   height:        40,

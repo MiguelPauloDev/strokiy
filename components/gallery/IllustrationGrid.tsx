@@ -2,7 +2,8 @@
 
 import { useState, useCallback } from 'react';
 import IllustrationCard from '@/components/gallery/IllustrationCard';
-import Toast from '@/components/ui/Toast';
+import Toast, { type ToastVariant } from '@/components/ui/Toast';
+import { copyToClipboard } from '@/lib/clipboard';
 import { downloadIllustrations } from '@/lib/download';
 import type { Illustration } from '@/types';
 import type { Breakpoint } from '@/hooks/useBreakpoint';
@@ -34,19 +35,6 @@ const getGridStyle = (breakpoint: string): React.CSSProperties => {
   };
 };
 
-async function copyToClipboard(text: string) {
-  try {
-    await navigator.clipboard.writeText(text);
-  } catch {
-    const el = document.createElement('textarea');
-    el.value = text;
-    document.body.appendChild(el);
-    el.select();
-    document.execCommand('copy');
-    document.body.removeChild(el);
-  }
-}
-
 /* ── Close icon ── */
 function IconClose() {
   return (
@@ -58,9 +46,16 @@ function IconClose() {
 }
 
 export default function IllustrationGrid({ illustrations, breakpoint = 'desktop' }: IllustrationGridProps) {
-  const [selectedIds,  setSelectedIds ] = useState<Set<string>>(new Set());
-  const [toastVisible, setToastVisible] = useState(false);
-  const [toastMsg,     setToastMsg    ] = useState('SVG copied!');
+  const [selectedIds,    setSelectedIds   ] = useState<Set<string>>(new Set());
+  const [toastVisible,   setToastVisible  ] = useState(false);
+  const [toastMsg,       setToastMsg      ] = useState('SVG copied!');
+  const [toastVariant,   setToastVariant  ] = useState<ToastVariant>('success');
+
+  const showToast = useCallback((msg: string, variant: ToastVariant = 'success') => {
+    setToastMsg(msg);
+    setToastVariant(variant);
+    setToastVisible(true);
+  }, []);
 
   /* Toggle individual selection */
   const handleToggle = useCallback((id: string) => {
@@ -72,30 +67,46 @@ export default function IllustrationGrid({ illustrations, breakpoint = 'desktop'
     });
   }, []);
 
-  /* Single card copy → toast */
+  /* Single card copy success → toast */
   const handleCopy = useCallback(() => {
-    setToastMsg('SVG copied!');
-    setToastVisible(true);
-  }, []);
+    showToast('SVG copied!');
+  }, [showToast]);
+
+  /* Single card copy error → toast */
+  const handleCopyError = useCallback(() => {
+    showToast('Não foi possível copiar o SVG', 'error');
+  }, [showToast]);
 
   const hideToast = useCallback(() => setToastVisible(false), []);
 
   /* Selection helpers */
-  const selectedCount        = selectedIds.size;
-  const selectedIlls         = illustrations.filter(ill => selectedIds.has(ill.id));
+  const selectedCount = selectedIds.size;
+  const selectedIlls  = illustrations.filter(ill => selectedIds.has(ill.id));
 
   /* Copy all selected SVGs */
   const handleCopyAll = useCallback(async () => {
-    const joined = selectedIlls.map(ill => ill.svg).join('\n\n');
-    await copyToClipboard(joined);
-    setToastMsg(`${selectedCount} SVG${selectedCount !== 1 ? 's' : ''} copied!`);
-    setToastVisible(true);
-  }, [selectedIlls, selectedCount]);
+    const joined  = selectedIlls.map(ill => ill.svg).join('\n\n');
+    const success = await copyToClipboard(joined);
+    if (success) {
+      showToast(`${selectedCount} SVG${selectedCount !== 1 ? 's' : ''} copied!`);
+    } else {
+      showToast('Não foi possível copiar os SVGs', 'error');
+    }
+  }, [selectedIlls, selectedCount, showToast]);
 
   /* Download selected SVGs — 1 file: direct .svg, 2+: ZIP */
-  const handleDownloadAll = useCallback(() => {
-    downloadIllustrations(selectedIlls.map(ill => ({ svg: ill.svg, name: ill.name })));
-  }, [selectedIlls]);
+  const handleDownloadAll = useCallback(async () => {
+    try {
+      await downloadIllustrations(selectedIlls.map(ill => ({ svg: ill.svg, name: ill.name })));
+      if (selectedCount === 1) {
+        showToast('SVG descarregado!');
+      } else {
+        showToast(`ZIP com ${selectedCount} ilustrações descarregado!`);
+      }
+    } catch {
+      showToast('Erro ao descarregar. Tenta novamente.', 'error');
+    }
+  }, [selectedIlls, selectedCount, showToast]);
 
   /* Clear all */
   const handleClear = useCallback(() => setSelectedIds(new Set()), []);
@@ -120,13 +131,12 @@ export default function IllustrationGrid({ illustrations, breakpoint = 'desktop'
             isSelected={selectedIds.has(ill.id)}
             onSelect={handleToggle}
             onCopy={handleCopy}
+            onCopyError={handleCopyError}
           />
         ))}
       </div>
 
-      {/* ── Selection action bar ──
-          Wrapper: posiciona na content area (left:320 desktop, left:0 tablet/mobile)
-          Inner pill: centra-se dentro do wrapper com flexbox              */}
+      {/* ── Selection action bar ── */}
       {selectedCount > 0 && (
         <div
           style={{
@@ -154,7 +164,6 @@ export default function IllustrationGrid({ illustrations, breakpoint = 'desktop'
               animation:     'barIn 220ms cubic-bezier(0.34,1.56,0.64,1) both',
             }}
           >
-            {/* Count */}
             <span style={{
               fontFamily:    '"Geist Mono", monospace',
               fontSize:      13,
@@ -166,7 +175,6 @@ export default function IllustrationGrid({ illustrations, breakpoint = 'desktop'
               {selectedCount} selected
             </span>
 
-            {/* Copy / Copy all */}
             <button
               onClick={handleCopyAll}
               style={{
@@ -186,7 +194,6 @@ export default function IllustrationGrid({ illustrations, breakpoint = 'desktop'
               {selectedCount > 1 ? 'Copy all' : 'Copy'}
             </button>
 
-            {/* Download / Download all */}
             <button
               onClick={handleDownloadAll}
               style={{
@@ -206,7 +213,6 @@ export default function IllustrationGrid({ illustrations, breakpoint = 'desktop'
               {selectedCount === 1 ? 'Download SVG' : `Download ZIP (${selectedCount})`}
             </button>
 
-            {/* Clear selection */}
             <button
               onClick={handleClear}
               aria-label="Clear selection"
@@ -230,21 +236,14 @@ export default function IllustrationGrid({ illustrations, breakpoint = 'desktop'
         </div>
       )}
 
-      {/* Toast global — alinhado à content area */}
       <Toast
         message={toastMsg}
         visible={toastVisible}
         onHide={hideToast}
+        variant={toastVariant}
         offsetLeft={breakpoint === 'desktop' ? 320 : 0}
       />
 
-      {/* Keyframe for bar entry */}
-      <style>{`
-        @keyframes barIn {
-          from { opacity: 0; transform: translateY(12px); }
-          to   { opacity: 1; transform: translateY(0);    }
-        }
-      `}</style>
     </>
   );
 }
