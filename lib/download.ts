@@ -36,7 +36,8 @@ export async function downloadMultipleSVGs(
 
 export async function downloadIllustrations(
   illustrations: Array<{ svg: string; name: string }>
-) {
+): Promise<void> {
+  if (illustrations.length === 0) return;
   if (illustrations.length === 1) {
     downloadSingleSVG(illustrations[0].svg, illustrations[0].name);
   } else {

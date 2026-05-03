@@ -96,13 +96,17 @@ export default function IllustrationGrid({ illustrations, breakpoint = 'desktop'
 
   /* Download selected SVGs — 1 file: direct .svg, 2+: ZIP */
   const handleDownloadAll = useCallback(async () => {
+    const isMultiple = selectedCount > 1;
+    showToast(isMultiple
+      ? `A criar ZIP com ${selectedCount} ilustrações...`
+      : 'A descarregar SVG...'
+    );
     try {
       await downloadIllustrations(selectedIlls.map(ill => ({ svg: ill.svg, name: ill.name })));
-      if (selectedCount === 1) {
-        showToast('SVG descarregado!');
-      } else {
-        showToast(`ZIP com ${selectedCount} ilustrações descarregado!`);
-      }
+      showToast(isMultiple
+        ? `ZIP com ${selectedCount} ilustrações descarregado!`
+        : `${selectedIlls[0]?.name ?? 'ilustração'}.svg descarregado!`
+      );
     } catch {
       showToast('Erro ao descarregar. Tenta novamente.', 'error');
     }
