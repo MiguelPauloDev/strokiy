@@ -53,6 +53,7 @@ const ANIM_MOTION    = ['Ripple', 'Morph',  'Draw in' ];
 
 const COLOR_SWATCHES = [
   '#212123',
+  '#888888',
   '#EFEFFF',
   '#00AAFF',
   '#00E499',

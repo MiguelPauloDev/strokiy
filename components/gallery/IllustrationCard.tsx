@@ -14,10 +14,16 @@ interface Props {
 }
 
 function prepareSvg(svg: string): string {
-  return svg
-    .replace(/(<svg[^>]*?)\s+width="[^"]*"/g, '$1')
-    .replace(/(<svg[^>]*?)\s+height="[^"]*"/g, '$1')
-    .replace('<svg ', '<svg width="124" height="124" ');
+  if (typeof window === 'undefined') return svg;
+  try {
+    const doc  = new DOMParser().parseFromString(svg, 'image/svg+xml');
+    const root = doc.documentElement;
+    root.setAttribute('width',  '124');
+    root.setAttribute('height', '124');
+    return new XMLSerializer().serializeToString(root);
+  } catch {
+    return svg;
+  }
 }
 
 /* Easing lento (Default → Hover) */

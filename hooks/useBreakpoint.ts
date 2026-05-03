@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 
 export type Breakpoint = 'desktop' | 'tablet' | 'mobile';
+export type BreakpointOrNull = Breakpoint | null;
 
 function getBreakpoint(width: number): Breakpoint {
   if (width >= 1024) return 'desktop';
@@ -10,12 +11,8 @@ function getBreakpoint(width: number): Breakpoint {
   return 'mobile';
 }
 
-/**
- * Returns the current breakpoint.
- * SSR-safe: initial value is 'desktop' (server renders desktop layout).
- */
-export function useBreakpoint(): Breakpoint {
-  const [bp, setBp] = useState<Breakpoint>('desktop');
+export function useBreakpoint(): Breakpoint | null {
+  const [bp, setBp] = useState<Breakpoint | null>(null);
 
   useEffect(() => {
     const update = () => setBp(getBreakpoint(window.innerWidth));

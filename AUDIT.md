@@ -9,7 +9,7 @@
 
 - ✅ **[RESOLVIDO] `document.execCommand('copy')` deprecated + sem feedback de erro** — `lib/clipboard.ts` criado; `IllustrationCard` e `IllustrationGrid` importam da lib; Toast de erro (`variant='error'`, fundo `#FF3155`) mostrado quando a cópia falha.
 
-- **[bug] `prepareSvg` corrompe SVGs com `width` em atributos de filhos** — `components/gallery/IllustrationCard.tsx:14-19` — A regex pode não capturar o width correcto se o SVG tiver namespaces ou atributos fora de ordem; `replace('<svg ', ...)` sem regex corrompe SVGs aninhados. *Pendente.*
+- ✅ **[RESOLVIDO] `prepareSvg` corrompe SVGs com `width` em atributos de filhos** — Substituído por `DOMParser` + `XMLSerializer`; modifica apenas o elemento raiz `<svg>`, sem afectar elementos filho.
 
 - ✅ **[RESOLVIDO] Memory leak potencial em `useSoundSystem`** — `hooks/useSoundSystem.ts` — `playNext` agora remove o listener da faixa anterior antes de criar a nova; cleanup do `useEffect` faz `removeEventListener`, `pause()` e `lofiRef.current = null`.
 
@@ -29,17 +29,17 @@
 
 - ✅ **[RESOLVIDO] Sem toast/feedback no download** — `IllustrationGrid` mostra "SVG descarregado!" (1 ficheiro) ou "ZIP com N ilustrações descarregado!" (múltiplos), e Toast de erro em caso de falha.
 
-- **[ux] `useBreakpoint` causa layout shift em mobile** — `hooks/useBreakpoint.ts:18` — Estado inicial `'desktop'` causa CLS em mobile após hidratação. *Pendente.*
+- ✅ **[RESOLVIDO] `useBreakpoint` causa layout shift em mobile** — Estado inicial mudado para `null`; `HomePage` retorna um `<div>` vazio até o breakpoint estar resolvido, eliminando o CLS em mobile.
 
 - ✅ **[RESOLVIDO] Hint "double click to explore" sem cleanup correcto** — `components/gallery/FilterBar.tsx` — Todos os timeouts (`t1`, `t2`, `t3`, `t4`) agora declarados no scope do `useEffect` e cancelados no return do cleanup.
 
-- **[ux] Filtro de cor usa hex hardcoded que não bate com os SVGs** — `components/gallery/FilterBar.tsx` — *Pendente.*
+- ✅ **[RESOLVIDO] Filtro de cor usa hex hardcoded que não bate com os SVGs** — `#888888` adicionado aos swatches; lista agora cobre todas as 8 cores únicas presentes nas ilustrações.
 
 ---
 
 ## 🟡 Melhoria (nice to have)
 
-- **[code] `app/page.tsx` com ~730 linhas** — `TZ_TO_COUNTRY` extraído para `lib/timezone.ts`. Restam `TimeBadge`, `DarkTimeBadge`, `DarkSoundButtons`, WaveButton e ícones. *Parcialmente resolvido.*
+- ✅ **[RESOLVIDO] `app/page.tsx` com ~730 linhas** — `TimeBadge`, `DarkTimeBadge`, `WaveButton`, `DarkSoundButtons` (com todos os ícones) extraídos para `components/layout/`. Ficheiro reduzido para ~238 linhas.
 
 - **[code] `components/gallery/FilterBar.tsx` com 810+ linhas** — *Pendente.*
 
@@ -82,7 +82,7 @@
 | 9 | `TZ_TO_COUNTRY` → `lib/timezone.ts` | ✅ Resolvido |
 | 10 | `@keyframes barIn` → `globals.css` | ✅ Resolvido |
 | 11 | `useCallback` no `set` do `FilterBar.tsx` | ✅ Resolvido |
-| 12 | Dividir `page.tsx` em headers separados | ⏳ Pendente |
-| 13 | Resolver CLS do `useBreakpoint` | ⏳ Pendente |
-| 14 | Substituir `prepareSvg` por parser robusto | ⏳ Pendente |
-| 15 | Corrigir filtro de cor (hex mismatch) | ⏳ Pendente |
+| 12 | Dividir `page.tsx` em componentes `components/layout/` | ✅ Resolvido |
+| 13 | Resolver CLS do `useBreakpoint` | ✅ Resolvido |
+| 14 | Substituir `prepareSvg` por parser robusto (DOMParser) | ✅ Resolvido |
+| 15 | Corrigir filtro de cor (hex mismatch) | ✅ Resolvido |
