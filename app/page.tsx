@@ -12,7 +12,6 @@ import WaveButton from '@/components/layout/WaveButton';
 import DarkSoundButtons from '@/components/layout/DarkSoundButtons';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
 import { useFilters } from '@/providers/FilterContext';
-import { useSoundContext } from '@/providers/SoundContext';
 import { useThemeContext } from '@/providers/ThemeContext';
 import { getIllustrations } from '@/lib/illustrations';
 
@@ -51,15 +50,14 @@ function FilterButton({ onClick }: { onClick: () => void }) {
 /* ── Page ── */
 export default function HomePage() {
   const { filters, setFilters } = useFilters();
-  const { play }                = useSoundContext();
   const { theme }               = useThemeContext();
   const isDark                  = theme === 'dark';
   const [drawerOpen, setDrawerOpen] = useState(false);
   const bp     = useBreakpoint();
   const router = useRouter();
 
-  const openDrawer  = useCallback(() => { setDrawerOpen(true);  play('sidebar-open');  }, [play]);
-  const closeDrawer = useCallback(() => { setDrawerOpen(false); play('sidebar-close'); }, [play]);
+  const openDrawer  = useCallback(() => setDrawerOpen(true),  []);
+  const closeDrawer = useCallback(() => setDrawerOpen(false), []);
 
   const illustrations = useMemo(() => getIllustrations(filters), [filters]);
   const totalCount    = useMemo(

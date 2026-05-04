@@ -2,19 +2,11 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 
-export type SoundKey =
-  | 'hover'
-  | 'copy'
-  | 'select'
-  | 'sidebar-open'
-  | 'sidebar-close';
+export type SoundKey = 'copy' | 'download';
 
 const SOUND_MAP: Record<SoundKey, string | string[]> = {
-  'hover':         '/sounds/button-1.wav',
-  'copy':          ['/sounds/musical-tap-1.wav', '/sounds/musical-tap-2.wav', '/sounds/musical-tap-3.wav'],
-  'select':        '/sounds/success.wav',
-  'sidebar-open':  '/sounds/whoosh-1.wav',
-  'sidebar-close': '/sounds/whoosh-2.wav',
+  'copy':     ['/sounds/musical-tap-1.wav', '/sounds/musical-tap-2.wav', '/sounds/musical-tap-3.wav'],
+  'download': '/sounds/musical-tap-1.wav',
 };
 
 function resolveSound(key: SoundKey): string {

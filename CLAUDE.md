@@ -140,6 +140,31 @@ Padding sidebar:   16px
 
 ---
 
+## Sistema de Som
+
+Sons DESLIGADOS por defeito. Activados pelo botão wave.
+
+Hierarquia (do mais ao menos frequente):
+1. **Lofi music** — ambiente, controlado pelo utilizador
+2. **Copy SVG** — musical-tap aleatório (tap-1/2/3.wav), confirmação subtil
+3. **Download** — musical-tap-1.wav marcante, hero sound
+4. **Easter egg** — som do Mario, momento único e especial
+
+Sons removidos intencionalmente:
+- **Hover**: demasiado frequente, cria fadiga sonora
+- **Select**: o visual (card escuro) já dá feedback suficiente
+- **Sidebar open/close**: acção de navegação, não de conclusão
+- **Spark pluck**: ruído que interfere com sons principais
+
+Referências de sound design seguidas:
+- Apple: um som por momento, nunca sobreposição
+- Slack: sons subtis em contexto de trabalho
+- Linear: sons só em momentos de conclusão
+
+`SoundKey = 'copy' | 'download'` — os únicos sons do sistema.
+
+---
+
 ## Base de Dados — Schema Supabase
 
 ### Tabela `illustrations`

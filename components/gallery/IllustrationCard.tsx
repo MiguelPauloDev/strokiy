@@ -51,9 +51,8 @@ export default function IllustrationCard({ illustration, isSelected, onSelect, o
 
   const handleSelect = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!isSelected) play('select');
     onSelect(illustration.id);
-  }, [illustration.id, isSelected, onSelect, play]);
+  }, [illustration.id, onSelect]);
 
   const handleDeselect = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -66,7 +65,7 @@ export default function IllustrationCard({ illustration, isSelected, onSelect, o
     <article
       data-card=""
       onClick={isSelected ? handleDeselect : handleSelect}
-      onMouseEnter={() => { setIsHovered(true); if (!isSelected) play('hover'); }}
+      onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       style={{
         position:     'relative',

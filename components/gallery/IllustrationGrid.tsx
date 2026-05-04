@@ -5,6 +5,7 @@ import IllustrationCard from '@/components/gallery/IllustrationCard';
 import Toast, { type ToastVariant } from '@/components/ui/Toast';
 import { copyToClipboard } from '@/lib/clipboard';
 import { downloadIllustrations } from '@/lib/download';
+import { useSoundContext } from '@/providers/SoundContext';
 import type { Illustration } from '@/types';
 import type { Breakpoint } from '@/hooks/useBreakpoint';
 
@@ -46,6 +47,7 @@ function IconClose() {
 }
 
 export default function IllustrationGrid({ illustrations, breakpoint = 'desktop' }: IllustrationGridProps) {
+  const { play }         = useSoundContext();
   const [selectedIds,    setSelectedIds   ] = useState<Set<string>>(new Set());
   const [toastVisible,   setToastVisible  ] = useState(false);
   const [toastMsg,       setToastMsg      ] = useState('SVG copied!');
@@ -103,6 +105,7 @@ export default function IllustrationGrid({ illustrations, breakpoint = 'desktop'
     );
     try {
       await downloadIllustrations(selectedIlls.map(ill => ({ svg: ill.svg, name: ill.name })));
+      play('download');
       showToast(isMultiple
         ? `ZIP com ${selectedCount} ilustrações descarregado!`
         : `${selectedIlls[0]?.name ?? 'ilustração'}.svg descarregado!`
@@ -110,7 +113,7 @@ export default function IllustrationGrid({ illustrations, breakpoint = 'desktop'
     } catch {
       showToast('Erro ao descarregar. Tenta novamente.', 'error');
     }
-  }, [selectedIlls, selectedCount, showToast]);
+  }, [selectedIlls, selectedCount, showToast, play]);
 
   /* Clear all */
   const handleClear = useCallback(() => setSelectedIds(new Set()), []);
